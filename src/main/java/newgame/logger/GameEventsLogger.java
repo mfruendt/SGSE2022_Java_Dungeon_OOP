@@ -45,7 +45,7 @@ public class GameEventsLogger {
             ConsoleHandler consoleHandler = new ConsoleHandler();
             consoleHandler.setLevel(Level.INFO);
             consoleHandler.setFormatter(new EventsLogFormatter());
-            logger.addHandler(consoleHandler);
+            //logger.addHandler(consoleHandler);
     
             FileHandler fileHandler = new FileHandler(logFilePath, MAX_LOG_FILE_SIZE, MAX_LOG_FILES_COUNT, SHOULD_APPEND_NEW_LOGS);
             fileHandler.setLevel(Level.FINEST);

@@ -72,18 +72,7 @@ public class Hero extends Character implements IPlayerHudEntity
     private boolean hasInventoryContentChanged = false;
 
     private float skillLevel;
-    
-    private boolean hasTrapPotion;
-    
-    /* Skill variables*/
-    private static final int TELEPORT_COOLDOWN = 40;
-    private int teleportTimer;
-    private boolean hasTeleported;
-    
-    private static final float FLASH_DISTANCE = 1;
-    private static final int FLASH_COOLDOWN = 25;
-    private int flashTimer;
-    private boolean hasFlashed;
+
     private Projectile projectile;
 
     /** Create a new hero character
@@ -232,7 +221,6 @@ public class Hero extends Character implements IPlayerHudEntity
     {
         // Redraw the hero
         this.draw();
-        updateSkillTimer();
         updateWeaponTimer();
         if (isDamageTaken)
         {
@@ -240,7 +228,6 @@ public class Hero extends Character implements IPlayerHudEntity
         }
         else
         {
-        	handleSkills();
             handlePlayerMovement();
             handleAttacks();
             handleInputsForInventoryHandling();
@@ -369,15 +356,6 @@ public class Hero extends Character implements IPlayerHudEntity
     }
 
     /**
-     * Returns if the player has consumed a trap potion
-     * @return boolean hasTrapPotion
-     */
-	public boolean isTrapPotion() 
-	{
-		return hasTrapPotion;
-	}
-
-    /**
      * Register new observer instance.
      *
      * @param heroesItemObserver Observer interface to be registered
@@ -472,16 +450,10 @@ public class Hero extends Character implements IPlayerHudEntity
             case WEAPON:
             case PROTECTION:
             case SPELL:
-            {
-                droppedItem = toBeUsedItem;
-                isToBeUsedItemDropped = this.inventory.removeItem(toBeUsedItem);
-                break;
-            }
             case POTION:
             {
                 droppedItem = toBeUsedItem;
                 isToBeUsedItemDropped = this.inventory.removeItem(toBeUsedItem);
-                hasTrapPotion = true;
                 break;
             }
             default:
@@ -489,7 +461,7 @@ public class Hero extends Character implements IPlayerHudEntity
         }
 
         // don't change order!!!
-        if (!isToBeUsedItemDropped || (droppedItem == null))
+        if (!isToBeUsedItemDropped)
         {
             if (!itemType.equals(ItemType.SATCHEL))
             {
@@ -692,98 +664,7 @@ public class Hero extends Character implements IPlayerHudEntity
         GameEventsLogger.getLogger().fine(LogMessages.HERO_GOT_DAMAGE.toString());
         GameEventsLogger.getLogger().fine(LogMessages.HERO_KNOCKBACK + ": " + knockbackDirection.toString());
     }
-    
-    private void updateSkillTimer()
-    {
-    	if(teleportTimer > 0)
-    	{
-    		teleportTimer --;
-    	}
-    	if(teleportTimer <= 0 && hasTeleported)
-    	{
-    		hasTeleported = false;
-    	}
-    	
-    	if(flashTimer > 0)
-    	{
-    		flashTimer --;
-    	}
-    	if(flashTimer <= 0 && hasFlashed)
-    	{
-    		hasFlashed = false;
-    	}
-    }
-    
-    private void handleSkills()
-    {
-    	/* Teleport */
-    	if(skillLevel >= 2)
-    	{
-    		if(!hasTeleported)
-    		{
-    			if(Gdx.input.isKeyPressed(Input.Keys.K))
-    			{
-    				this.findRandomPosition();
-    				hasTeleported = true;
-    				teleportTimer = TELEPORT_COOLDOWN;
-    				GameEventsLogger.getLogger().fine(LogMessages.HERO_TELEPORT_SKILL.toString());
-    			}
-    		}
-    	}
-    	
-    	/* Flash */
-    	if(skillLevel >= 5)
-    	{
-    		if(!hasFlashed)
-    		{
-    			Point flashPosition = new Point(currentPosition);
-    			Point oldPosition = new Point(currentPosition);
-    			if(Gdx.input.isKeyPressed(Input.Keys.W) && Gdx.input.isKeyPressed(Input.Keys.J))
-            	{
-    				flashPosition.y += FLASH_DISTANCE;
-    				hasFlashed = true;
-            	}
-            	if(Gdx.input.isKeyPressed(Input.Keys.S) && Gdx.input.isKeyPressed(Input.Keys.J))
-            	{
-            		flashPosition.y -= FLASH_DISTANCE;
-            		hasFlashed = true;
-            	}
-            	
-            	if (currentDungeonWorld.isTileAccessible(flashPosition))
-                {
-                    this.currentPosition.y = flashPosition.y;
-                }
-                // If we would be out of bounds we reset the y component
-                else
-                {
-                	flashPosition.y = oldPosition.y;
-                }
-            	
-            	if(Gdx.input.isKeyPressed(Input.Keys.A) && Gdx.input.isKeyPressed(Input.Keys.J))
-            	{
-            		flashPosition.x -= FLASH_DISTANCE;
-            		hasFlashed = true;
-            	}
-            	if(Gdx.input.isKeyPressed(Input.Keys.D) && Gdx.input.isKeyPressed(Input.Keys.J))
-            	{
-            		flashPosition.x += FLASH_DISTANCE;
-            		hasFlashed = true;
-            	}
-            	
-            	if (currentDungeonWorld.isTileAccessible(flashPosition))
-                {
-                    this.currentPosition.x = flashPosition.x;
-                }
-            	
-    			if(hasFlashed)
-    			{
-    				flashTimer = FLASH_COOLDOWN;
-    				GameEventsLogger.getLogger().fine(LogMessages.HERO_FLASH_SKILL.toString());
-    			}
-    		}
-    	}
-    }
-    
+
     private void updateWeaponTimer()
     {
     	if(equipment.getWeapon() != null)

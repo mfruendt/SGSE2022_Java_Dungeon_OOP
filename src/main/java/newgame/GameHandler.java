@@ -3,6 +3,11 @@ package newgame;
 import de.fhbielefeld.pmdungeon.vorgaben.game.Controller.MainController;
 import de.fhbielefeld.pmdungeon.vorgaben.tools.Point;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -31,10 +36,10 @@ import newgame.logger.LogMessages;
 public class GameHandler extends MainController implements HeroObserver
 {
     /* Number of easy monsters that may spawn on a level */
-    private final static int NUMBER_OF_EASY_MONSTERS = 700;
+    private final static int NUMBER_OF_EASY_MONSTERS = 90;
 
     /* Number of hard monsters that may spawn on a level */
-    private final static int NUMBER_OF_HARD_MONSTERS = 10;
+    private final static int NUMBER_OF_HARD_MONSTERS = 9;
 
     /* Number of frames that an attack will be active (= deal damage) */
     private final static int NUMBER_OF_ATTACK_FRAMES = 30;
@@ -294,16 +299,16 @@ public class GameHandler extends MainController implements HeroObserver
 
         elapsedTime = System.nanoTime() - startTime;
 
-        timeMeasurements[currentMeasurement++] = elapsedTime;
+        //timeMeasurements[currentMeasurement++] = elapsedTime;
 
-        if (currentMeasurement == 11)
-        {
-            currentMeasurement = 0;
+        //if (currentMeasurement == 11)
+        //{
+        //    currentMeasurement = 0;
+        //    Arrays.sort(timeMeasurements);
+        //    GameEventsLogger.getLogger().info("Time: " + timeMeasurements[5]);
+        //}
 
-            Arrays.sort(timeMeasurements);
-
-            GameEventsLogger.getLogger().info("Time: " + timeMeasurements[5]);
-        }
+        System.out.printf("%d\n", elapsedTime);
     }
 
     /** Method that will be called upon loading the level
